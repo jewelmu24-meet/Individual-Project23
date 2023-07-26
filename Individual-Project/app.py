@@ -32,7 +32,7 @@ def signin():
 
         try:
             login_session['user']= auth.sign_in_with_email_and_password(email, password)
-            return redirect(url_for('add_tweet'))
+            return redirect(url_for('content'))
 
         except:
             error ="authentication failed"
@@ -58,18 +58,33 @@ def signup():
             login_session['user']= auth.create_user_with_email_and_password(email, password)
             UID = login_session['user']['localId']
             db.child('Users').child(UID).set(user)
-            return redirect(url_for('add_tweet'))
+            return redirect(url_for('content'))
 
         except:
             error ="authentication failed"
             return render_template('signup.html', e=email, p=password)
 
 
+@app.route('/review', methods=['GET', 'POST'])
+def review():
+    if request.method =='POST':
+        recipe = request.form['recipe']
+        text = request.form['text']
+        UID = login_session['user']['localId']
+        review = {'recipe': recipe, 'text': text, 'uid': UID}
+        db.child("reviews").child(recipe).push(review)
+        return redirect(url_for('content'))
+
+    else:
+        return render_template("review.html")
+
+      
+
 @app.route('/signout')
 def signout():
     login_session['user'] = None
-auth.current_user = None
-return redirect(url_for('signin'))
+    auth.current_user = None
+    return redirect(url_for('signin'))
 
 
 
@@ -81,10 +96,14 @@ def about():
 
 @app.route('/content', methods=['GET', 'POST'])
 def content():
-    if request.method=='POST':
-        
+#if request.method=='POST':
 
-    return render_template('content.html')
+    reviews = db.child('reviews').get().val()
+    reviews_macarons = reviews['macarons']
+    reviews_macarons = reviews['macarons']
+    reviews_macarons = reviews['macarons']
+
+    return render_template('content.html', m=reviews_macarons)
 
 
 #Code goes above here
