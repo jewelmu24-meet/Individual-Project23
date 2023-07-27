@@ -86,13 +86,9 @@ def signout():
     auth.current_user = None
     return redirect(url_for('signin'))
 
-
-
 @app.route('/about')
 def about():
     return render_template('about.html')
-
-
 
 @app.route('/content', methods=['GET', 'POST'])
 def content():
@@ -100,10 +96,10 @@ def content():
 
     reviews = db.child('reviews').get().val()
     reviews_macarons = reviews['macarons']
-    reviews_macarons = reviews['macarons']
-    reviews_macarons = reviews['macarons']
+    reviews_cremebrulee = reviews['cremebrulee']
+    reviews_eclairs = reviews['eclairs']
 
-    return render_template('content.html', m=reviews_macarons)
+    return render_template('content.html', m=reviews_macarons, c=reviews_cremebrulee, e=reviews_eclairs)
 
 
 #Code goes above here
